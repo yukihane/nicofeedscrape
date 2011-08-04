@@ -6,10 +6,10 @@ def spans = ['毎時':'hourly', 'デイリー':'daily', '週間':'weekly', '月�
  
 def rankHtml = new XmlSlurper(new SAXParser()).parse(rankUrl)
  
-def groups = rankHtml.'BODY'.'DIV'.'DIV'.'TABLE'.'TR'.'TD'.'TABLE'.'TR'.'TH'.'A'
+def groups = rankHtml.'BODY'.'DIV'.'DIV'.'DIV'.'TABLE'.'TBODY'.'TR'.'TD'.'TABLE'.'TBODY'.'TR'.'TH'.'A'
 def groupMap = [:]
 groups.each{groupMap[it.text()] = it.@href.toString().split('/')[6]}
-//groupMap.each{println it.key + ', ' + it.value}
+// groupMap.each{println 'GROUP: '+it.key + ', ' + it.value}
  
  
 println '<HTML><BODY>'
@@ -24,11 +24,12 @@ for(kind in kinds){
  
 for(group in groupMap){
     def groupUrl = rankUrl + '/fav/daily/' + group.value
+    // println 'GROUP URL: ' + groupUrl
     def groupHtml = new XmlSlurper(new SAXParser()).parse(groupUrl)
-    def categories = groupHtml.'*'.'*'.'*'.'*'.'*'.'*'.'*'.'*'.'*'.'NOBR'.'A'
+    def categories = groupHtml.'BODY'.'DIV'.'DIV'.'DIV'.'DIV'.'DIV'.'DIV'.'TABLE'.'TBODY'.'TR'.'TD'.'FORM'.'SELECT'.'OPTION'
     def categoryMap = [:]
-    categories.each{categoryMap[it.'DIV'.text()] = it.@href.toString().split('/')[6]}
-    //    categoryMap.each{println it.key + ', ' + it.value}
+    // categories.each{println 'CATEGORY: ' + it.text() + ', ' + it.@value.toString()}
+    categories.each{categoryMap[it.text()] = it.@value.toString().split('/')[6]}
  
  
     println '<P>'
